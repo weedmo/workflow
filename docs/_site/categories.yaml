@@ -1,8 +1,12 @@
-# 상단 메뉴(대분류). 순서대로 헤더에 나온다. key는 URL과 문서 meta.yaml의 category에 쓰이므로 바꾸지 않는다.
+# 상단 메뉴(대분류). PARA 방식. key는 URL과 문서 meta.yaml의 category에 쓰이므로 바꾸지 않는다.
 categories:
-  - key: sdlc
-    name: SDLC
-  - key: agent
-    name: Agent
-  - key: image
-    name: Image
+  - key: inbox
+    name: 0. Inbox
+  - key: project
+    name: 1. Project
+  - key: area
+    name: 2. Area
+  - key: resource
+    name: 3. Resource
+  - key: archive
+    name: 4. Archive

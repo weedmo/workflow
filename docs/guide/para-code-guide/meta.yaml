@@ -1,0 +1,15 @@
+title: 세컨드 브레인 사용 가이드 (PARA + CODE)
+category: inbox
+menu: guide
+kind: markdown
+status: draft
+current: v0.1
+versions:
+  - version: v0.1
+    entry: para-code-guide.md
+    note: 가이드 초안 작성
+    source: upload
+    created: 2026-10-15 00:15:15
+order: 0
+notion_url:
+gdrive_url:

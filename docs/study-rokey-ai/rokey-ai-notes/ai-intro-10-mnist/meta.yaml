@@ -1,0 +1,15 @@
+title: 강의 3기 AI개론 10차시 — MNIST
+category: resource
+menu: study-rokey-ai
+kind: markdown
+status: draft
+current: v0.1
+versions:
+- version: v0.1
+  entry: ai-intro-10-mnist.md
+  note: 'Quartz 위키에서 이전 (CODE: Organize). 원본 wiki/study/rokey-ai/basic/ai-intro-10-mnist.md'
+  source: upload
+  created: '2026-10-15 00:15:04'
+order: 9
+notion_url: null
+gdrive_url: null

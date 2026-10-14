@@ -1,15 +1,32 @@
 # 대분류 key별 좌측 메뉴 트리. 메뉴 slug는 docs/ 바로 아래 폴더 이름과 같다. 대분류 자체는 categories.yaml에 있다.
 menus:
-  sdlc:
-    - slug: sprint-gitflow
-      name: 스프린트 Git-flow 프로세스
-    - slug: code-review-automation
-      name: 코드 리뷰 자동화
-    - slug: onboarding
-      name: 온보딩
-  agent: []
-  image:
-    - slug: git
-      name: Git관련이미지
-    - slug: svg
-      name: SVG편집
+  inbox:
+    - slug: guide
+      name: 세컨드 브레인 가이드
+  project:
+    - slug: lerobot-data-standardization
+      name: lerobot framework data 표준화 1차
+    - slug: open-source-contributions
+      name: 오픈소스 기여
+  area:
+    - slug: career
+      name: 커리어
+    - slug: certifications
+      name: 수료·자격
+  resource:
+    - slug: robotics
+      name: Robotics
+    - slug: ai-ml
+      name: AI / ML
+    - slug: data-engineering
+      name: Data Engineering
+    - slug: study-notes
+      name: 학습 노트
+      menus:
+        - slug: study-rokey-ai
+          name: Rokey-AI
+        - slug: study-ros-study
+          name: ROS-study
+  archive:
+    - slug: doosan-rokey-bootcamp
+      name: 두산 Rokey 부트캠프 (2025.01–07)

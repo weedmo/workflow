@@ -1,0 +1,15 @@
+title: Hyundai NGV / 현대엔지브이
+category: area
+menu: certifications
+kind: markdown
+status: draft
+current: v0.1
+versions:
+- version: v0.1
+  entry: hyundai-ngv.md
+  note: 'Quartz 위키에서 이전 (CODE: Organize). 원본 wiki/entities/hyundai-ngv.md'
+  source: upload
+  created: '2026-10-15 00:15:04'
+order: 3
+notion_url: null
+gdrive_url: null

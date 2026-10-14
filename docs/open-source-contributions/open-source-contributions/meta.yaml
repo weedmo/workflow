@@ -1,0 +1,15 @@
+title: Open source contributions / 오픈소스 기여
+category: project
+menu: open-source-contributions
+kind: markdown
+status: draft
+current: v0.1
+versions:
+- version: v0.1
+  entry: open-source-contributions.md
+  note: 'Quartz 위키에서 이전 (CODE: Organize). 원본 wiki/concepts/open-source-contributions.md'
+  source: upload
+  created: '2026-10-15 00:15:04'
+order: 0
+notion_url: null
+gdrive_url: null

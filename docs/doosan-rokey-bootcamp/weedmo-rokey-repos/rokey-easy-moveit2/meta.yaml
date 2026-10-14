@@ -1,0 +1,15 @@
+title: rokey-easy-moveit2 / Rokey MoveIt2 Task Server
+category: archive
+menu: doosan-rokey-bootcamp
+kind: markdown
+status: draft
+current: v0.1
+versions:
+- version: v0.1
+  entry: rokey-easy-moveit2.md
+  note: 'Quartz 위키에서 이전 (CODE: Organize). 원본 wiki/entities/rokey-easy-moveit2.md'
+  source: upload
+  created: '2026-10-15 00:15:04'
+order: 0
+notion_url: null
+gdrive_url: null

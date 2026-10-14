@@ -1,0 +1,15 @@
+title: Overview / 개요
+category: area
+menu: career
+kind: markdown
+status: draft
+current: v0.1
+versions:
+- version: v0.1
+  entry: overview.md
+  note: 'Quartz 위키에서 이전 (CODE: Organize). 원본 wiki/overview.md'
+  source: upload
+  created: '2026-10-15 00:15:04'
+order: 0
+notion_url: null
+gdrive_url: null

@@ -1,0 +1,15 @@
+title: lerobot framework data 표준화 1차
+category: project
+menu: lerobot-data-standardization
+kind: markdown
+status: draft
+current: v0.0
+versions:
+  - version: v0.0
+    entry: data-standardization-phase1.md
+    note: "프로젝트 스텁 생성 (CODE: Capture)"
+    source: upload
+    created: 2026-10-15 00:15:15
+order: 0
+notion_url:
+gdrive_url:

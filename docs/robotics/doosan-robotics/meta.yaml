@@ -1,0 +1,15 @@
+title: Doosan Robotics / 두산 로보틱스
+category: resource
+menu: robotics
+kind: markdown
+status: draft
+current: v0.1
+versions:
+- version: v0.1
+  entry: doosan-robotics.md
+  note: 'Quartz 위키에서 이전 (CODE: Organize). 원본 wiki/entities/doosan-robotics.md'
+  source: upload
+  created: '2026-10-15 00:15:04'
+order: 1
+notion_url: null
+gdrive_url: null

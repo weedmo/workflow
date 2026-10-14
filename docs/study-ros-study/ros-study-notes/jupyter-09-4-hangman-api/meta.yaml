@@ -1,0 +1,15 @@
+title: 9차시_4_hangman_api_list
+category: resource
+menu: study-ros-study
+kind: markdown
+status: draft
+current: v0.1
+versions:
+- version: v0.1
+  entry: jupyter-09-4-hangman-api.md
+  note: 'Quartz 위키에서 이전 (CODE: Organize). 원본 wiki/study/ros-study/jupyter_ros/jupyter-09-4-hangman-api.md'
+  source: upload
+  created: '2026-10-15 00:15:04'
+order: 5
+notion_url: null
+gdrive_url: null

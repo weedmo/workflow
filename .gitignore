@@ -4,3 +4,6 @@
 node_modules/
 site/data/
 site/dist/
+
+# second-brain: ROS-study lecture PDFs come from a private repo and are large (~155MB); kept locally only
+docs/study-ros-study/ros-study-notes/v0.1/pdfs/
