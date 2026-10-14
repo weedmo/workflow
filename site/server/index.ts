@@ -20,6 +20,7 @@ import {
   trashDoc, updateCategory, updateDoc,
 } from "./manage.ts";
 import { convert, convertData, type Target } from "./convert.ts";
+import { registerAuth } from "./auth.ts";
 
 const SITE_ROOT = resolve(import.meta.dirname, "..");
 // 테스트는 WORKFLOW_DOCS_ROOT·WORKFLOW_DATA_DIR로 임시 폴더를 넘겨 실제 docs/와 색인을 건드리지 않는다
@@ -65,6 +66,7 @@ function docEvent(req: { headers: Record<string, unknown> }, r: { menu: string; 
 
 const app = Fastify({ logger: { level: "info" }, bodyLimit: MAX_UPLOAD });
 
+registerAuth(app);
 await app.register(fastifyMultipart, { limits: { fileSize: MAX_UPLOAD, files: 2000 } });
 // docs/ 원본 파일. HTML 문서의 상대 경로 리소스와 링크도 이 경로 아래에서 풀린다.
 await app.register(fastifyStatic, { root: DOCS_ROOT, prefix: "/files/", dotfiles: "ignore", index: false, cacheControl: false });
@@ -279,6 +281,18 @@ watch(DOCS_ROOT, {
   clearTimeout(timer);
   timer = setTimeout(() => reindex("watch"), 300);
 });
+
+// 운영 모드(SERVE_WEB=1): 빌드한 화면(site/dist)도 같은 포트로 제공한다. 터널은 이 한 곳만 가리키면 된다
+const WEB_DIST = join(SITE_ROOT, "dist");
+if (process.env.SERVE_WEB === "1" && existsSync(WEB_DIST)) {
+  await app.register(fastifyStatic, { root: WEB_DIST, prefix: "/", decorateReply: false, wildcard: false, index: ["index.html"] });
+  const indexHtml = readFileSync(join(WEB_DIST, "index.html"));
+  // 화면 주소(/resource/메뉴/문서 등)는 index.html로. /api·/files의 없는 경로는 그대로 404
+  app.setNotFoundHandler((req, reply) => {
+    if (req.method !== "GET" || req.url.startsWith("/api/") || req.url.startsWith("/files/")) return reply.code(404).send({ error: "Not Found" });
+    return reply.type("text/html; charset=utf-8").send(indexHtml);
+  });
+}
 
 reindex("start");
 await app.listen({ host: "127.0.0.1", port: PORT });

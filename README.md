@@ -119,3 +119,11 @@ docs/
 ```
 
 원본은 파일(yaml과 버전 폴더)이고 git으로 추적합니다. 사이트에서 한 작업도 이 파일들에 그대로 기록되므로, 사이트에서 바꾼 뒤 커밋하면 됩니다. 상세 규칙은 [`CLAUDE.md`](CLAUDE.md)에 있습니다.
+
+## 운영 실행 (poneglyph.wiki, Cloudflare Tunnel)
+
+- 설정: `site/.env` (gitignored, chmod 600) — `SITE_ADMIN_PASSWORD`, `SESSION_SECRET`, `PORT`(5175), `WORKFLOW_DATA_DIR`(site/data-prod).
+- 실행: `cd site && npx vite build && setsid nohup bash scripts/run-prod.sh >/dev/null 2>&1 &` — 화면(site/dist)과 API를 한 포트로, 죽으면 다시 띄움. 로그 `site/logs/server.log`.
+- 터널: `cloudflared tunnel ...` 의 서비스 주소를 `http://127.0.0.1:5175` 로.
+- 로그인: 읽기(GET)는 공개, 쓰기(GET 아닌 /api/*, /api/trash)는 관리자 로그인 필요(401). 헤더의 로그인 버튼.
+  같은 머신에서 프록시 헤더(cf-connecting-ip, x-forwarded-for) 없이 온 요청(MCP)은 로그인 없이 허용. `WORKFLOW_TRUST_LOCAL=0`이면 끔.

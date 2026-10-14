@@ -3,6 +3,7 @@ import { versionLabel, type DocDetail } from "../lib/api.ts";
 import { manage } from "../lib/manage.ts";
 import { StatusBadge } from "./StatusBadge.tsx";
 import { useAction } from "./manage/useAction.ts";
+import { READONLY } from "../lib/auth.ts";
 
 /** 다음 정식 버전 번호(서버 nextMajor와 같은 규칙): v0.x → v1.0, v1.2 → v2.0 */
 function nextMajor(versions: string[]): string {
@@ -17,7 +18,7 @@ function nextMajor(versions: string[]): string {
 export function ReleaseBadge({ doc }: { doc: DocDetail }) {
   const [, setParams] = useSearchParams();
   const { run, busy } = useAction();
-  if (doc.status === "approved") return <StatusBadge status={doc.status} />;
+  if (READONLY || doc.status === "approved") return <StatusBadge status={doc.status} />;
 
   const next = nextMajor(doc.versions.map((v) => v.version));
   return (

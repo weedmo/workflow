@@ -18,6 +18,7 @@ import { SegmentDiffViewer } from "../viewers/SegmentDiffViewer.tsx";
 import { HtmlRefView } from "../viewers/HtmlRefView.tsx";
 import { SegmentRefList } from "../viewers/SegmentRefList.tsx";
 import { parseSeg } from "../lib/seg.ts";
+import { READONLY } from "../lib/auth.ts";
 
 // 줄 단위 비교가 의미 있는 텍스트 형식
 const TEXT = /\.(md|markdown|html?|svg|ya?ml|json|txt|mmd|csv|xml|ts|tsx|js|sh|py|sql)$/i;
@@ -66,7 +67,7 @@ export function DocView() {
   const cmpEntry = cmpVersion?.files.find((f) => f.isEntry);
   const comparable = !!entry && (TEXT.test(entry.path) || SEGMENT_DIFF.test(entry.path)) && data.versions.length > 1;
   // 참조 보기(3.2): 주소의 ?seg= 조각을 강조하거나 참조 복사 모드일 때. HTML·DOCX·PPTX·XLSX만
-  const referable = !!entry && /\.(html?|svg|docx|pptx|xlsx)$/i.test(entry.path);
+  const referable = !READONLY && !!entry && /\.(html?|svg|docx|pptx|xlsx)$/i.test(entry.path);
   const highlight = referable ? parseSeg(params.get("seg")) : [];
   const exitRef = () => { setRefCopy(false); setParam("seg", null); };
   const onTextEditExit = (saved?: string, warnings?: string[]) => {
@@ -130,18 +131,18 @@ export function DocView() {
               a.click();
             }} />
           )}
-          <IconButton icon={FilePlus2} label="새 버전 올리기" onClick={() => openUpload({ menu, doc })} />
-          {entry && /\.(html?|svg|docx|pptx|xlsx)$/i.test(entry.path) && version.version === data.currentVersion && !cmpVersion && (
+          {!READONLY && <IconButton icon={FilePlus2} label="새 버전 올리기" onClick={() => openUpload({ menu, doc })} />}
+          {!READONLY && entry && /\.(html?|svg|docx|pptx|xlsx)$/i.test(entry.path) && version.version === data.currentVersion && !cmpVersion && (
             <IconButton icon={TextCursorInput} label="텍스트 편집" active={textEditing} disabled={textEditing}
               onClick={() => { setRefCopy(false); setParam("seg", null); setTextEditing(true); }} />
           )}
-          {referable && !cmpVersion && !textEditing && (
+          {!READONLY && referable && !cmpVersion && !textEditing && (
             <IconButton icon={Link2} label="참조 복사 (글자를 눌러 Claude Code에 붙여 넣을 주소 복사)" active={refCopy}
               onClick={() => setRefCopy((v) => !v)} />
           )}
           <IconButton icon={Presentation} label="프레젠테이션 (전체 화면)" disabled={!entry}
             onClick={() => void stage.current?.requestFullscreen()} />
-          <IconButton icon={Settings2} label="문서 관리" onClick={() => setSettingsOpen(true)} />
+          {!READONLY && <IconButton icon={Settings2} label="문서 관리" onClick={() => setSettingsOpen(true)} />}
           {data.notionUrl && (
             <a className="inline-flex items-center gap-1 rounded-md px-1.5 py-1 text-xs text-muted hover:bg-sunken hover:text-fg" href={data.notionUrl} target="_blank" rel="noreferrer" data-tip="Notion에서 열기">
               Notion <ExternalLink size={16} aria-hidden />

@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link, Outlet, useLocation, useParams } from "react-router";
-import { Menu, PanelLeftOpen, Upload } from "lucide-react";
+import { LogIn, LogOut, Menu, PanelLeftOpen, Upload } from "lucide-react";
+import { LoginDialog } from "./LoginDialog.tsx";
+import { logout } from "../lib/auth.ts";
 import { IconButton } from "./IconButton.tsx";
 import { useTree } from "../lib/api.ts";
 import { useLiveUpdates } from "../lib/live.ts";
@@ -11,6 +13,7 @@ import { EmptyState } from "./EmptyState.tsx";
 import { SearchBox } from "./SearchBox.tsx";
 import { TopMenuBar } from "./header/TopMenuBar.tsx";
 import { SidebarResizer, useSidebarWidth } from "./SidebarResizer.tsx";
+import { READONLY } from "../lib/auth.ts";
 
 export function Layout() {
   return (
@@ -27,6 +30,7 @@ function Shell() {
   const { category } = useParams();
   const { data: tree, error } = useTree();
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [loginOpen, setLoginOpen] = useState(false);
   const sidebar = useSidebarWidth();
   const location = useLocation();
 
@@ -46,7 +50,11 @@ function Shell() {
         </Link>
         <TopMenuBar categories={tree?.categories ?? []} />
         <SearchBox />
-        <IconButton icon={Upload} label="업로드" variant="primary" size={22} className="ml-auto p-2 sm:ml-2" onClick={() => openUpload({ category })} />
+        {!READONLY && <IconButton icon={Upload} label="업로드" variant="primary" size={22} className="ml-auto p-2 sm:ml-2" onClick={() => openUpload({ category })} />}
+        {READONLY
+          ? <IconButton icon={LogIn} label="관리자 로그인" size={20} className="ml-auto p-2 sm:ml-1" onClick={() => setLoginOpen(true)} />
+          : <IconButton icon={LogOut} label="로그아웃" size={20} className="p-2" onClick={() => void logout()} />}
+        {loginOpen && <LoginDialog onClose={() => setLoginOpen(false)} />}
       </header>
 
       {/* 넓은 화면: 사이드바 너비는 --sidebar-w(끌어서 조절). 좁은 화면: 고정 폭 서랍 */}

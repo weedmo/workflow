@@ -16,6 +16,7 @@ import { DeleteMenuDialog, MoveMenuDialog } from "./manage/MenuDialogs.tsx";
 import { TrashDialog } from "./manage/TrashDialog.tsx";
 import { contains } from "./manage/menuTree.ts";
 import { ContextMenu, type MenuEntry } from "./sidebar/ContextMenu.tsx";
+import { READONLY } from "../lib/auth.ts";
 
 /*
  * 좌측 폴더 트리(MarkFlow category-tree 방식). 폴더 = 메뉴(menus.yaml), 폴더 안에 하위 폴더와 문서, 문서 안에 하위 문서.
@@ -311,7 +312,7 @@ export function Sidebar({ category, warnings, onCollapse }: { category: Category
         <div className="flex items-center justify-between px-2">
           <p className="font-mono text-[15px] tracking-widest text-muted uppercase">{category.name}</p>
           <div className="flex items-center gap-1">
-            <IconButton icon={FolderPlus} label="폴더 추가" size={19} className="p-1" onClick={() => setEditing({ kind: "new-folder", parent: null })} />
+            {!READONLY && <IconButton icon={FolderPlus} label="폴더 추가" size={19} className="p-1" onClick={() => setEditing({ kind: "new-folder", parent: null })} />}
             <IconButton icon={PanelLeftClose} label="사이드바 접기" size={19} className="hidden p-1 md:inline-flex" onClick={onCollapse} />
           </div>
         </div>
@@ -336,7 +337,7 @@ export function Sidebar({ category, warnings, onCollapse }: { category: Category
         )}
       </nav>
 
-      <footer className="shrink-0 border-t border-line p-2">
+      {!READONLY && <footer className="shrink-0 border-t border-line p-2">
         <button
           className="flex w-full items-center gap-2 rounded-md px-3 py-1.5 text-left text-sm text-muted hover:bg-sunken hover:text-fg"
           onClick={() => setOpen({ kind: "trash" })}
@@ -345,7 +346,7 @@ export function Sidebar({ category, warnings, onCollapse }: { category: Category
           <span className="flex-1">휴지통</span>
           {trash?.length ? <span className="rounded-full bg-sunken px-2 font-mono text-xs">{trash.length}</span> : null}
         </button>
-      </footer>
+      </footer>}
 
       {menu && (
         <ContextMenu x={menu.x} y={menu.y} items={menuItems(menu.row)} onClose={closeMenu}
@@ -373,13 +374,13 @@ function TreeRow({ rowKey, row, depth, draggable, className, children }: {
   return (
     <div
       data-row={rowKey}
-      draggable={draggable}
+      draggable={draggable && !READONLY}
       onDragStart={(e) => t.startDrag(e, row)}
       onDragEnd={t.endDrag}
       onDragOver={(e) => t.dragOver(e, rowKey, row)}
       onDragLeave={(e) => { if (!e.currentTarget.contains(e.relatedTarget as Node)) t.dragLeave(rowKey); }}
       onDrop={(e) => t.drop(e, rowKey, row)}
-      onContextMenu={(e) => { e.preventDefault(); t.openMenu(e.clientX, e.clientY, row); }}
+      onContextMenu={(e) => { if (READONLY) return; e.preventDefault(); t.openMenu(e.clientX, e.clientY, row); }}
       className={`group relative flex items-center gap-1 rounded-md pr-1 ${zone === "inside" ? "bg-accent-soft outline-2 -outline-offset-2 outline-accent" : ""} ${dragging ? "opacity-40" : ""} ${className}`}
       style={{ paddingLeft: 4 + depth * 14 }}
     >
@@ -393,6 +394,7 @@ function TreeRow({ rowKey, row, depth, draggable, className, children }: {
 /** ⋯ 버튼. 마우스가 올라간 줄에서만 보이고(터치 화면은 늘), 키보드 포커스에도 보인다 */
 function MoreButton({ label, row }: { label: string; row: Row }) {
   const t = useTreeCtx();
+  if (READONLY) return null;
   return (
     <IconButton icon={MoreHorizontal} label={label} size={16} className="p-0.5 md:opacity-0 md:group-hover:opacity-100 md:focus-visible:opacity-100"
       onClick={(e) => { const r = e.currentTarget.getBoundingClientRect(); t.openMenu(r.left, r.bottom + 4, row); }} />
@@ -419,7 +421,7 @@ function FolderItem({ menu, depth, parent, siblings }: { menu: MenuNode; depth: 
     <li
       className={`rounded-md ${fileOver ? "bg-accent-soft outline-2 outline-accent outline-dashed" : ""}`}
       // 바깥 파일을 폴더에 놓으면 그 폴더로 업로드 창을 연다(사이드바 안에서 끄는 중이면 무시)
-      onDragOver={(e) => { if (t.drag || !e.dataTransfer.types.includes("Files")) return; e.preventDefault(); e.stopPropagation(); setFileOver(true); }}
+      onDragOver={(e) => { if (READONLY || t.drag || !e.dataTransfer.types.includes("Files")) return; e.preventDefault(); e.stopPropagation(); setFileOver(true); }}
       onDragLeave={(e) => { if (!e.currentTarget.contains(e.relatedTarget as Node)) setFileOver(false); }}
       onDrop={async (e) => {
         if (t.drag || !e.dataTransfer.types.includes("Files")) return;
@@ -442,8 +444,8 @@ function FolderItem({ menu, depth, parent, siblings }: { menu: MenuNode; depth: 
             <span className="font-mono text-[11px] font-normal text-muted">{menu.documents.length}</span>
           </button>
         )}
-        <IconButton icon={Plus} label={`${menu.name}에 새 문서`} size={16} className="p-0.5 md:opacity-0 md:group-hover:opacity-100 md:focus-visible:opacity-100"
-          onClick={() => openUpload({ category: t.category.key, menu: menu.slug })} />
+        {!READONLY && <IconButton icon={Plus} label={`${menu.name}에 새 문서`} size={16} className="p-0.5 md:opacity-0 md:group-hover:opacity-100 md:focus-visible:opacity-100"
+          onClick={() => openUpload({ category: t.category.key, menu: menu.slug })} />}
         <MoreButton label={`${menu.name} 폴더 메뉴`} row={row} />
       </TreeRow>
       {open && (

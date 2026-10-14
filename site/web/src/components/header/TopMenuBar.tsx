@@ -6,6 +6,7 @@ import { slugify } from "../../lib/files.ts";
 import { manage } from "../../lib/manage.ts";
 import { useAction } from "../manage/useAction.ts";
 import { IconButton } from "../IconButton.tsx";
+import { READONLY } from "../../lib/auth.ts";
 
 /**
  * 헤더의 상단 메뉴(대분류) 탭. 탭 줄에서 바로 관리한다.
@@ -195,7 +196,7 @@ export function TopMenuBar({ categories }: { categories: Category[] }) {
               <span className={`absolute inset-y-1.5 w-[3px] rounded-full bg-accent ${lineSide === "left" ? "-left-[2px]" : "-right-[2px]"}`} aria-hidden />
             )}
             {/* 드래그 핸들: 마우스를 올리면 보인다. 이 핸들을 잡아야 끌린다(탭 링크는 눌러도 끌리지 않는다) */}
-            <span
+            {READONLY ? <span className="pl-2" aria-hidden /> : <span
               draggable={renaming !== c.key}
               onDragStart={(e) => {
                 e.dataTransfer.effectAllowed = "move";
@@ -213,7 +214,7 @@ export function TopMenuBar({ categories }: { categories: Category[] }) {
               role="img"
             >
               <GripVertical size={14} aria-hidden />
-            </span>
+            </span>}
             {renaming === c.key ? (
               <RenameInput cat={c} onDone={() => setRenaming(null)} />
             ) : (
@@ -221,14 +222,14 @@ export function TopMenuBar({ categories }: { categories: Category[] }) {
                 <NavLink
                   to={`/${c.key}`}
                   draggable={false}
-                  onDoubleClick={() => setRenaming(c.key)}
+                  onDoubleClick={() => { if (!READONLY) setRenaming(c.key); }}
                   className={`py-3 pl-1 text-sm font-medium whitespace-nowrap ${active ? "pr-1 text-fg" : "pr-3 text-muted hover:text-fg"}`}
-                  data-tip="더블클릭으로 이름 변경"
+                  data-tip={READONLY ? undefined : "더블클릭으로 이름 변경"}
                 >
                   {c.name}
                 </NavLink>
                 {/* ⋯ 버튼은 선택된 탭에만 둔다(빈 자리로 탭 간격이 벌어지지 않게). 링크 안에 넣지 않는다(링크 안의 버튼은 HTML 규칙 위반) */}
-                {(active || menuFor?.key === c.key) && (
+                {!READONLY && (active || menuFor?.key === c.key) && (
                   <IconButton icon={Ellipsis} label={`${c.name} 메뉴`} size={16} className="mr-1.5 p-0.5"
                     aria-haspopup="menu" aria-expanded={menuFor?.key === c.key}
                     onClick={(e) => setMenuFor(menuFor?.key === c.key ? null : { key: c.key, anchor: e.currentTarget })} />
@@ -242,10 +243,10 @@ export function TopMenuBar({ categories }: { categories: Category[] }) {
           </div>
         );
       })}
-      <div className="flex shrink-0 items-center pl-1">
+      {!READONLY && <div className="flex shrink-0 items-center pl-1">
         <IconButton icon={Plus} label="대분류 추가" size={18} aria-haspopup="dialog" aria-expanded={!!adding}
           onClick={(e) => setAdding(adding ? null : e.currentTarget)} />
-      </div>
+      </div>}
       {adding && <AddPopover anchor={adding} onClose={() => setAdding(null)} />}
     </nav>
   );

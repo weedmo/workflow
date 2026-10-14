@@ -9,6 +9,7 @@ import { clearDraft, loadDraft, saveDraft } from "../lib/draft.ts";
 import { EmptyState } from "../components/EmptyState.tsx";
 import { MarkdownEditor } from "./markdown-editor/MarkdownEditor.tsx";
 import type { EditorLayout, WikiLinkItem } from "./markdown-editor/types.ts";
+import { READONLY } from "../lib/auth.ts";
 
 /** scripts: HTML 문서의 스크립트 실행 여부. 외부에서 가져온 문서는 처음에 끈다(3.3, D-25) */
 export interface DocContext { menu: string; doc: string; version: string; isCurrent: boolean; scripts?: boolean }
@@ -48,13 +49,13 @@ function useWikiLinkSearch() {
 function Editor({ original, file, ctx }: { original: string; file: VersionFile; ctx: DocContext }) {
   const qc = useQueryClient();
   // 업로드 대화상자의 "새 Markdown 문서"에서 넘어오면 편집 창을 열고 커서를 둔다
-  const justCreated = !!(useLocation().state as { edit?: boolean } | null)?.edit && ctx.isCurrent;
+  const justCreated = !READONLY && !!(useLocation().state as { edit?: boolean } | null)?.edit && ctx.isCurrent;
   const draftId = `${ctx.menu}/${ctx.doc}@${ctx.version}`;
   const [text, setText] = useState(original);
   const [layout, setLayout] = useState<EditorLayout>(() =>
-    matchMedia("(min-width: 1024px)").matches ? "split" : justCreated ? "editor" : "preview");
+    READONLY ? "preview" : matchMedia("(min-width: 1024px)").matches ? "split" : justCreated ? "editor" : "preview");
   const [pendingDraft, setPendingDraft] = useState(() => {
-    const d = ctx.isCurrent ? loadDraft(draftId) : null;
+    const d = ctx.isCurrent && !READONLY ? loadDraft(draftId) : null;
     return d !== null && d !== original ? d : null;
   });
   const [note, setNote] = useState("");
@@ -105,7 +106,7 @@ function Editor({ original, file, ctx }: { original: string; file: VersionFile; 
     }
   }
 
-  const saveForm = ctx.isCurrent ? (
+  const saveForm = READONLY ? undefined : ctx.isCurrent ? (
     <form className="ml-auto flex min-w-0 flex-1 basis-60 items-center justify-end gap-2" onSubmit={(e) => { e.preventDefault(); void save(); }}>
       {dirty && <span className="shrink-0 text-xs text-med">저장하지 않은 변경</span>}
       <input
@@ -135,7 +136,7 @@ function Editor({ original, file, ctx }: { original: string; file: VersionFile; 
   );
 
   return (
-    <MarkdownEditor value={text} onChange={setText} baseUrl={baseUrl} readOnly={!ctx.isCurrent}
+    <MarkdownEditor value={text} onChange={setText} baseUrl={baseUrl} readOnly={READONLY || !ctx.isCurrent}
       layout={layout} onLayoutChange={setLayout} autoFocus={justCreated}
       toolbarEnd={saveForm} notice={notice} onWikiLinkSearch={wikiSearch} />
   );

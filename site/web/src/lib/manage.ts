@@ -1,3 +1,4 @@
+import { READONLY } from "./auth.ts";
 import { useQuery } from "@tanstack/react-query";
 
 /** 관리 API. 실패하면 서버가 준 한국어 메시지로 Error를 던진다. */
@@ -41,7 +42,7 @@ export const manage = {
 
 export interface TrashItem { id: string; menu: string; doc: string; title: string; deletedAt: string }
 export const useTrash = () =>
-  useQuery({ queryKey: ["trash"], queryFn: async () => (await fetch("/api/trash")).json() as Promise<TrashItem[]> });
+  useQuery({ queryKey: ["trash"], enabled: !READONLY, queryFn: async () => (await fetch("/api/trash")).json() as Promise<TrashItem[]> });
 
 export interface SearchHit {
   slug: string; menuSlug: string; title: string; kind: string; status: string; currentVersion: string; category: string; menuName: string;
